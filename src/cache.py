@@ -95,6 +95,25 @@ class ProxyCache:
 			self._remove_expired_unlocked(now)
 			return self._hits, self._misses, self._evictions, len(self._entries)
 
+	def snapshot(self) -> list:
+		"""Return a read-only snapshot of cache entries for admin visibility."""
+		now = time.time()
+		with self._lock:
+			self._remove_expired_unlocked(now)
+			items = []
+			for key, entry in self._entries.items():
+				age = max(0.0, now - entry.created_at)
+				ttl_remaining = max(0.0, entry.ttl_seconds - age)
+				items.append(
+					{
+						"key": key,
+						"size_bytes": len(entry.response_data),
+						"age_seconds": round(age, 3),
+						"ttl_remaining_seconds": round(ttl_remaining, 3),
+					}
+				)
+			return items
+
 	def _remove_expired_unlocked(self, now: float) -> None:
 		expired_keys = [
 			key

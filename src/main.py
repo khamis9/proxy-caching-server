@@ -6,12 +6,16 @@ The proxy server accepts HTTP requests from clients and forwards them to
 target web servers, relaying responses back to clients.
 """
 
+import os
+
 from proxy_server import ProxyServer
+from admin_interface import AdminInterface
 from logger import Logger
 
 
 def main():
     """Entry point for the proxy server."""
+    admin_interface = None
     try:
         Logger.configure(log_file_path="logs/proxy_server.log")
 
@@ -37,10 +41,25 @@ def main():
             blocked_hosts=blocked_hosts,
             blocked_keywords=blocked_keywords,
         )
+
+        admin_password = os.environ.get("PROXY_ADMIN_PASSWORD", "admin")
+        admin_interface = AdminInterface(
+            proxy_server=proxy,
+            host="127.0.0.1",
+            port=8890,
+            password=admin_password,
+        )
+        admin_interface.start()
+        Logger.info("Admin credentials: user=admin, password from PROXY_ADMIN_PASSWORD")
+        Logger.info("Admin URL: http://127.0.0.1:8890")
+
         proxy.start()
 
     except Exception as e:
         Logger.error(f"Fatal error: {str(e)}")
+    finally:
+        if admin_interface is not None:
+            admin_interface.stop()
 
 
 if __name__ == "__main__":

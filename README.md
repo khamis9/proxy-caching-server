@@ -10,6 +10,7 @@ Implemented features:
 - Level 5 bonus: HTTPS tunneling via CONNECT
 - Level 5 bonus: Smart caching using response cache headers (Cache-Control and Expires)
 - Level 5 bonus: Response-time metrics in logs (origin/cache/tunnel)
+- Level 5 bonus: Password-protected admin web interface for cache/log/filter control
 
 ## Project Structure
 
@@ -20,6 +21,7 @@ Implemented features:
 - src/cache.py: thread-safe in-memory cache (TTL + LRU-style eviction)
 - src/filter.py: blacklist filtering logic
 - src/logger.py: console and file logger
+- src/admin_interface.py: password-protected admin dashboard and controls
 - tests/test_level1_client.py: basic manual test client
 - tests/test_level2_concurrent.py: Level 2 concurrency validation
 - tests/test_level3_cache.py: Level 3 cache behavior validation
@@ -35,6 +37,11 @@ python src/main.py
 Default settings:
 - Proxy listens on 0.0.0.0:8888
 - Persistent logs stored in logs/proxy_server.log
+- Admin interface listens on 127.0.0.1:8890 (Basic Auth user: admin)
+
+Admin password:
+- Set environment variable `PROXY_ADMIN_PASSWORD` before starting the server.
+- If not set, default password is `admin`.
 
 ## Test Scripts
 
