@@ -31,6 +31,11 @@ def main():
             "forbidden",
             "malware",
         }
+        blocked_ips = {
+            "192.168.1.100",  # Example malicious IP
+            "10.0.0.50",      # Example internal IP
+            "104.20.23.154",  # example.com's resolved IP (for testing)
+        }
 
         # Create and start proxy server on port 8888
         proxy = ProxyServer(
@@ -40,6 +45,7 @@ def main():
             cache_max_entries=100,
             blocked_hosts=blocked_hosts,
             blocked_keywords=blocked_keywords,
+            blocked_ips=blocked_ips,
         )
 
         admin_password = os.environ.get("PROXY_ADMIN_PASSWORD", "admin")

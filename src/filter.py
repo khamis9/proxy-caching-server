@@ -40,6 +40,10 @@ class RequestFilter:
 			blocked_keywords = set(self.blocked_keywords)
 			blocked_ips = set(self.blocked_ips)
 
+		# Debug logging
+		from logger import Logger
+		Logger.info(f"[FILTER] Host: {normalized_host}, Blocked IPs: {blocked_ips}")
+
 		if self._is_host_blocked(normalized_host, blocked_hosts):
 			return True, f"Host '{normalized_host}' is blacklisted"
 
@@ -48,7 +52,9 @@ class RequestFilter:
 				return True, f"URL matched blocked keyword '{keyword}'"
 
 		resolved_ip = self._resolve_host_ip(normalized_host)
+		Logger.info(f"[FILTER] Resolved {normalized_host} -> {resolved_ip}")
 		if resolved_ip and resolved_ip in blocked_ips:
+			Logger.info(f"[FILTER] IP {resolved_ip} is in blocked list!")
 			return True, f"Destination IP '{resolved_ip}' is blacklisted"
 
 		return False, ""

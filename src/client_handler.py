@@ -72,9 +72,12 @@ class ClientHandler:
             else:
                 url = f"http://{host}:{port}{resource}"
             Logger.info(f"Requested URL: {url}")
+            Logger.info(f"[DEBUG] request_filter is: {self.request_filter}")
 
             if self.request_filter:
+                Logger.info(f"[DEBUG] Checking filter for: {host}, {resource}")
                 blocked, reason = self.request_filter.is_blocked(host=host, resource=resource)
+                Logger.info(f"[DEBUG] Filter result: blocked={blocked}, reason={reason}")
                 if blocked:
                     Logger.warning(
                         f"Blocked request from {self.client_ip}:{self.client_port} to {url} ({reason})"
